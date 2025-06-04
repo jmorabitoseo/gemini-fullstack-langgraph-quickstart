@@ -17,6 +17,8 @@ class OverallState(TypedDict):
     search_query: Annotated[list, operator.add]
     web_research_result: Annotated[list, operator.add]
     sources_gathered: Annotated[list, operator.add]
+    generated_queries: Annotated[list, operator.add]  # To store all generated queries
+    reflection_notes: Annotated[list, operator.add]  # To store notes from reflection
     initial_search_query_count: int
     max_research_loops: int
     research_loop_count: int

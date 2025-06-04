@@ -78,7 +78,8 @@ def generate_query(state: OverallState, config: RunnableConfig) -> QueryGenerati
     )
     # Generate the search queries
     result = structured_llm.invoke(formatted_prompt)
-    return {"query_list": result.query}
+    # Return the list of queries and also add them to the new generated_queries state field
+    return {"query_list": result.query, "generated_queries": result.query}
 
 
 def continue_to_web_research(state: QueryGenerationState):
@@ -171,13 +172,27 @@ def reflection(state: OverallState, config: RunnableConfig) -> ReflectionState:
     )
     result = llm.with_structured_output(Reflection).invoke(formatted_prompt)
 
-    return {
+    reflection_note = {
         "is_sufficient": result.is_sufficient,
         "knowledge_gap": result.knowledge_gap,
-        "follow_up_queries": result.follow_up_queries,
+        "follow_up_queries": [q.query for q in result.follow_up_queries], # Storing just the query string
+    }
+
+    # Prepare updates for the OverallState
+    updates = {
+        "is_sufficient": result.is_sufficient,
+        "knowledge_gap": result.knowledge_gap,
+        "follow_up_queries": result.follow_up_queries, # This is for the evaluate_research conditional node
         "research_loop_count": state["research_loop_count"],
         "number_of_ran_queries": len(state["search_query"]),
+        "reflection_notes": [reflection_note],  # Add current reflection
     }
+
+    # If there are follow-up queries, add them to the generated_queries list
+    if result.follow_up_queries:
+        updates["generated_queries"] = result.follow_up_queries
+
+    return updates
 
 
 def evaluate_research(
@@ -262,6 +277,8 @@ def finalize_answer(state: OverallState, config: RunnableConfig):
     return {
         "messages": [AIMessage(content=result.content)],
         "sources_gathered": unique_sources,
+        "generated_queries": state.get("generated_queries", []), # Ensure it's part of the final output
+        "reflection_notes": state.get("reflection_notes", []),   # Ensure it's part of the final output
     }
 
 
