@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend && langgraph dev\"",
-    "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && langgraph dev"
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm install && npm run dev",
+    "dev:backend": "cd backend && pip install -e . && langgraph dev",
+    "postinstall": "cd frontend && npm install"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
