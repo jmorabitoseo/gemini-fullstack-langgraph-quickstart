@@ -21,9 +21,7 @@ export default function App() {
     max_research_loops: number;
     reasoning_model: string;
   }>({
-    apiUrl: import.meta.env.DEV
-      ? "http://localhost:2024"
-      : "http://localhost:8123",
+    apiUrl: window.location.port === "5173" ? "http://localhost:2024" : "",
     assistantId: "agent",
     messagesKey: "messages",
     onFinish: (event: any) => {
