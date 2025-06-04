@@ -1,0 +1,13 @@
+{
+  "name": "gemini-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend && langgraph dev\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && langgraph dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
