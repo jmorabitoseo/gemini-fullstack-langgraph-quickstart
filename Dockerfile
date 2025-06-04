@@ -19,13 +19,13 @@ RUN npm run build
 # Stage 2: Python Backend
 FROM docker.io/langchain/langgraph-api:3.11
 
-# -- Install UV --
-# First install curl, then install UV using the standalone installer
-RUN apt-get update && apt-get install -y curl && \
+# -- Install UV and make --
+# First install curl and make, then install UV using the standalone installer
+RUN apt-get update && apt-get install -y curl make && \
     curl -LsSf https://astral.sh/uv/install.sh | sh && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 ENV PATH="/root/.local/bin:$PATH"
-# -- End of UV installation --
+# -- End of UV and make installation --
 
 # -- Copy built frontend from builder stage --
 # The app.py expects the frontend build to be at ../frontend/dist relative to its own location.
